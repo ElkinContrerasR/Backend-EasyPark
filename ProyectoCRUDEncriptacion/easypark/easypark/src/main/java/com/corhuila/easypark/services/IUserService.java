@@ -12,4 +12,11 @@ public interface IUserService {
     //User updateUser(Integer id, User userDetails);
     void deleteUser(Integer id);
     String encryptPassword(String password);
+    User login(String email, String password); 
+    void sendEmail(String to, String subject, String body);
+    User findByEmailAndDocument(String email, String document);
+    
+    String generateTemporaryPassword();
+    
+   
 }

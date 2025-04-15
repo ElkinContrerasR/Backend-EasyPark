@@ -1,11 +1,12 @@
 package com.corhuila.easypark.models;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
+import jakarta.persistence.*;
+
 
 @Table(name = "users")
 @Entity
@@ -35,16 +36,30 @@ public class User {
     @Column(nullable = false) 
     private String password;
 
+    @Column
+    private String document;
+
+     @Enumerated(EnumType.STRING) // Guarda el valor como String en la BD
+    @Column(nullable = false)
+    private Rol rol = Rol.USER; // Valor por defecto: USER
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "creadoPor", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Tarifa> tarifasCreadas = new ArrayList<>();
+
     public User() {
     }
 
-    public User(String nombres, String apellidos, String telefono, String direccion, String email, String password) {
+    public User(String nombres, String apellidos, String telefono, String direccion, String email, String password, 
+    String document, Rol rol) {
         this.nombres = nombres;
         this.apellidos = apellidos;
         this.telefono = telefono;
         this.direccion = direccion;
         this.email = email;
         this.password = password; 
+        this.document=document;
+        this.rol = rol;
     }
 
     public Integer getId() { return id; }
@@ -63,10 +78,42 @@ public class User {
     public void setDireccion(String direccion) { this.direccion = direccion; }
 
 
-
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
 
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getDocument() { return document; }
+    public void setDocument(String document) { this.document = document; }
+    
+    //GET Y SET DE ENUM
+    public Rol getRol() {
+        return rol;
+    }
+
+    public void setRol(Rol rol) {
+        this.rol = rol;
+    }
+
+    // Métodos para manejar la relación bidireccional (opcionales pero recomendados)
+    
+    public void addTarifa(Tarifa tarifa) {
+        tarifasCreadas.add(tarifa);
+        tarifa.setCreadoPor(this);
+    }
+    
+    public void removeTarifa(Tarifa tarifa) {
+        tarifasCreadas.remove(tarifa);
+        tarifa.setCreadoPor(null);
+    }
+
+    // Getter para tarifasCreadas
+    public List<Tarifa> getTarifasCreadas() {
+        return tarifasCreadas;
+    }
+
+    public void setTarifasCreadas(List<Tarifa> tarifasCreadas) {
+        this.tarifasCreadas = tarifasCreadas;
+    }
+
 }

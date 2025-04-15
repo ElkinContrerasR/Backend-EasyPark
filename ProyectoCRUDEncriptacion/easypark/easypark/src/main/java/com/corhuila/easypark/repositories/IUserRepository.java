@@ -7,5 +7,6 @@ import com.corhuila.easypark.models.User;
 
 @Repository
 public interface IUserRepository extends JpaRepository<User,Integer>{
-
+    User findByEmail(String email);
+    User findByEmailAndDocument(String email, String document);
 }
