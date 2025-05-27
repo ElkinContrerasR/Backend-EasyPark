@@ -37,6 +37,7 @@ public class User {
     private String password;
 
     @Column
+    @JsonIgnore
     private String document;
 
      @Enumerated(EnumType.STRING) // Guarda el valor como String en la BD
@@ -46,6 +47,10 @@ public class User {
     @JsonIgnore
     @OneToMany(mappedBy = "creadoPor", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<Tarifa> tarifasCreadas = new ArrayList<>();
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Reserva> reservas = new ArrayList<>();
 
     public User() {
     }
@@ -114,6 +119,25 @@ public class User {
 
     public void setTarifasCreadas(List<Tarifa> tarifasCreadas) {
         this.tarifasCreadas = tarifasCreadas;
+    }
+
+    // Nuevos métodos para manejar la relación con Reservas
+    public void addReserva(Reserva reserva) {
+        reservas.add(reserva);
+        reserva.setUsuario(this);
+    }
+    
+    public void removeReserva(Reserva reserva) {
+        reservas.remove(reserva);
+        reserva.setUsuario(null);
+    }
+
+    public List<Reserva> getReservas() {
+        return reservas;
+    }
+
+    public void setReservas(List<Reserva> reservas) {
+        this.reservas = reservas;
     }
 
 }
